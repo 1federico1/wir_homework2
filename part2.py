@@ -1,9 +1,7 @@
 import part1 as part1
 import pprint as pp
 import csv
-
-ratings_file = "datasets/user_movie_rating.txt"
-movie_file = "datasets/movie_graph.txt"
+import sys
 
 
 def read_ratings(path, user_id):
@@ -94,8 +92,8 @@ def filter_results(pr_vector, user_ratings):
 
 
 if __name__ == '__main__':
-    user_ratings = read_ratings(ratings_file, 1683)
-    pr_vector = compute_page_rank(movie_file, user_ratings)
+    user_ratings = read_ratings(sys.argv[2], sys.argv[3])
+    pr_vector = compute_page_rank(sys.argv[1], user_ratings)
     # pp.pprint(pr_vector)
     filter_results(pr_vector, user_ratings)
     # page_rank = reader.compute_page_rank(ratings_file)
