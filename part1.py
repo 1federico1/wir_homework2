@@ -3,8 +3,9 @@ import pprint as pp
 import csv
 
 path = "datasets/movie_graph.txt"
+#path = "datasets/test_graph.txt"
 result = nx.Graph()
-alpha = 0.15
+alpha = .15
 epsilon = 10 ** -6
 
 
@@ -28,57 +29,57 @@ def create_pagerank_vector(graph):
     return page_rank_vector
 
 
-def norm_weights(graph):
-    sum = {}
-    for node_j in graph:
-        sum[node_j] = 0
-        for node_i in graph[node_j]:
-            sum[node_j] += get_weight(graph, node_i, node_j)
-    result = nx.Graph()
-
-    for node_j in graph:
-        dict_result = {}
-        for node_i in graph[node_j]:
-            result.add_node(node_j)
-            norm = get_weight(graph, node_i, node_j) / sum[node_j]
-            dict_result[node_i] = norm
-            print(node_i, dict_result[node_i])
-            result.add_edge(node_j, node_i, weight=dict_result[node_i])
-            break
-    return result
+# def norm_weights(graph):
+#     sum = {}
+#     for node_j in graph:
+#         sum[node_j] = 0
+#         for node_i in graph[node_j]:
+#             sum[node_j] += get_weight(graph, node_i, node_j)
+#     result = nx.Graph()
+#
+#     for node_j in graph:
+#         dict_result = {}
+#         for node_i in graph[node_j]:
+#             result.add_node(node_j)
+#             norm = get_weight(graph, node_i, node_j) / sum[node_j]
+#             dict_result[node_i] = norm
+#             result.add_edge(node_j, node_i, weight=dict_result[node_i])
+#             break
+#     return result
 
 
 def pagerank_single_iteration(graph, pagerank_vector):
     next_page_rank_vector = {}
     sum_of_all_partial_values = 0.
-
+    num_nodes = graph.number_of_nodes()
     node_degree = {}
+
     for node_j in graph.nodes():
         node_degree[node_j] = len(graph[node_j])
 
-    sum = {}
+    total_weight = {}
     for node_j in graph.nodes():
-        sum[node_j] = 0
+        total_weight[node_j] = 0
         for node_i in graph[node_j]:
-            sum[node_j] += get_weight(graph, node_j, node_i)
+            total_weight[node_j] += get_weight(graph, node_j, node_i)
 
     for node_j in graph.nodes():
         next_page_rank_vector[node_j] = 0.
+
         for node_i in graph[node_j]:
-            degree_node_i = node_degree[node_j]
-            weight_norm = get_weight(graph, node_j, node_i) / sum[node_j]
-            next_page_rank_vector[node_j] += (1. - alpha) * pagerank_vector[node_j] * weight_norm / degree_node_i
+            degree_node_i = graph.degree(node_i)
+            weight = (get_weight(graph, node_j, node_i))
+            weight_norm = weight / total_weight[node_j]
+            num = (1. - alpha) * (pagerank_vector[node_j]) * weight_norm
+            next_page_rank_vector[node_j] += num / degree_node_i
         sum_of_all_partial_values += next_page_rank_vector[node_j]
 
-        leaked_pr = 1. - sum_of_all_partial_values
+    leaked_pr = 1. - sum_of_all_partial_values
 
-        num_nodes = graph.number_of_nodes()
+    fraction_of_leaked_pr_to_give_each_node = leaked_pr / num_nodes
 
-        fraction_of_leaked_pr_to_give_each_node = leaked_pr / num_nodes
-
-        for node_j in next_page_rank_vector:
-            next_page_rank_vector[node_j] = next_page_rank_vector[node_j] + fraction_of_leaked_pr_to_give_each_node
-
+    for node_k in next_page_rank_vector:
+        next_page_rank_vector[node_k] = next_page_rank_vector[node_k] + fraction_of_leaked_pr_to_give_each_node
     return next_page_rank_vector
 
 
@@ -108,7 +109,7 @@ def get_weight(graph, node_i, node_j):
 
 def compute_distance(vector_1, vector_2):
     distance = 0.
-    for node in vector_1.keys():
+    for node in vector_1:
         distance += abs(vector_1[node] - vector_2[node])
     return distance
 
@@ -136,7 +137,7 @@ if __name__ == '__main__':
     result_graph = load_graph()
     # norm_graph = norm_weights(result_graph)
     # print(norm_graph[1])
-    pr_vector = create_pagerank_vector(result_graph)
+
     # pagerank_single_iteration(result_graph, pr_vector)
     # print(result_graph[1])
     # print("normalizing weights")
@@ -148,12 +149,14 @@ if __name__ == '__main__':
     #         break
     #     break
     damping_factor = 1 - alpha
-    # realpr = nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon)
+    realpr = nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon)
     print("computing page rank vector")
-    pp.pprint(nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon))
+    # pp.pprint(nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon))
     mypr = compute_page_rank(result_graph)
-    # print(distance(mypr, realpr))
+    print(compute_distance(mypr, realpr))
     pp.pprint(mypr)
+    pp.pprint(realpr)
+
     totalsum = 0.
     for val in mypr:
         totalsum += mypr[val]
