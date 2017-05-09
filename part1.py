@@ -3,13 +3,13 @@ import pprint as pp
 import csv
 
 path = "datasets/movie_graph.txt"
-#path = "datasets/test_graph.txt"
+# path = "datasets/test_graph.txt"
 result = nx.Graph()
 alpha = .15
 epsilon = 10 ** -6
 
 
-def load_graph():
+def read_file(path):
     input_file = open(path, 'r')
     data = input_file.readlines()
     input_file.close()
@@ -48,7 +48,7 @@ def create_pagerank_vector(graph):
 #     return result
 
 
-def pagerank_single_iteration(graph, pagerank_vector):
+def pagerank_single_iteration(graph, alpha, pagerank_vector):
     next_page_rank_vector = {}
     sum_of_all_partial_values = 0.
     num_nodes = graph.number_of_nodes()
@@ -86,26 +86,6 @@ def pagerank_single_iteration(graph, pagerank_vector):
 def get_weight(graph, node_i, node_j):
     return graph[node_i][node_j]['weight']
 
-    # next_page_rank_vector = {}
-    # sum_of_all_partial_values = 0.
-    # for node_j in graph.nodes():
-    #     next_page_rank_vector[node_j] = 0.
-    #     for node_i in graph[node_j]:
-    #         out_degree_node_i = graph.out_degree(node_i)
-    #         next_page_rank_vector[node_j] += ((1. - alpha) * pagerank_vector[node_i]) * \
-    #                                          (graph[node_i][node_j]['weight'] / out_degree_node_i)
-    #
-    #     sum_of_all_partial_values += next_page_rank_vector[node_j]
-    #
-    # leaked_pr = 1 - sum_of_all_partial_values
-    # num_nodes = graph.number_of_nodes()
-    # fraction_of_leaked_pr_to_give_each_node = leaked_pr / num_nodes
-    #
-    # for node_j in next_page_rank_vector:
-    #     next_page_rank_vector[node_j] = next_page_rank_vector[node_j] + fraction_of_leaked_pr_to_give_each_node
-    #
-    # return next_page_rank_vector
-
 
 def compute_distance(vector_1, vector_2):
     distance = 0.
@@ -114,14 +94,15 @@ def compute_distance(vector_1, vector_2):
     return distance
 
 
-def compute_page_rank(graph):
+def compute_page_rank(path, alpha):
+    graph = read_file(path)
     previous_page_rank_vector = create_pagerank_vector(graph)
     iterations = 1
     convergence = False
     page_rank_vector = {}
     while not convergence:
         print("iteration #" + str(iterations))
-        page_rank_vector = pagerank_single_iteration(graph, previous_page_rank_vector)
+        page_rank_vector = pagerank_single_iteration(graph, alpha, previous_page_rank_vector)
         iterations += 1
         dist = compute_distance(previous_page_rank_vector, page_rank_vector)
         print(dist, epsilon)
@@ -134,7 +115,7 @@ def compute_page_rank(graph):
 
 if __name__ == '__main__':
     print("computing graph")
-    result_graph = load_graph()
+    result_graph = read_file(path)
     # norm_graph = norm_weights(result_graph)
     # print(norm_graph[1])
 
@@ -149,10 +130,10 @@ if __name__ == '__main__':
     #         break
     #     break
     damping_factor = 1 - alpha
-    realpr = nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon)
     print("computing page rank vector")
     # pp.pprint(nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon))
-    mypr = compute_page_rank(result_graph)
+    mypr = compute_page_rank(path, alpha)
+    realpr = nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon)
     print(compute_distance(mypr, realpr))
     pp.pprint(mypr)
     pp.pprint(realpr)
