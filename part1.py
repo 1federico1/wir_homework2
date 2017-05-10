@@ -138,7 +138,7 @@ if __name__ == '__main__':
     mypr = compute_page_rank(path)
     realpr = nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon)
     print(compute_distance(mypr, realpr))
-    print ("my page rank")
+    print ("my page rank:")
     pp.pprint(mypr)
 #print "real page rank"
 #pp.pprint(realpr)

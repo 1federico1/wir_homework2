@@ -74,7 +74,6 @@ def compute_bias(rating, user_ratings):
 
 
 if __name__ == '__main__':
-    print ("inizio")
     user_ratings = read_ratings(ratings_file, 1683)
     pr_vector = compute_page_rank(movie_file, user_ratings)
     filter_results(pr_vector, user_ratings)
