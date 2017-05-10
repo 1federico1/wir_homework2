@@ -9,6 +9,7 @@ alpha = .15
 epsilon = 10 ** -6
 
 
+
 def read_file(path):
     input_file = open(path, 'r')
     data = input_file.readlines()
@@ -48,43 +49,45 @@ def create_pagerank_vector(graph):
 #     return result
 
 
-def pagerank_single_iteration(graph, alpha, pagerank_vector):
+def pagerank_single_iteration(graph, pagerank_vector):
     next_page_rank_vector = {}
     sum_of_all_partial_values = 0.
     num_nodes = graph.number_of_nodes()
-    node_degree = {}
+    for node in graph.nodes():
+        next_page_rank_vector[node]= compute_porting_probability(node,graph, next_page_rank_vector, pagerank_vector)
+        sum_of_all_partial_values += next_page_rank_vector[node]
 
-    for node_j in graph.nodes():
-        node_degree[node_j] = len(graph[node_j])
-
-    total_weight = {}
-    for node_j in graph.nodes():
-        total_weight[node_j] = 0
-        for node_i in graph[node_j]:
-            total_weight[node_j] += get_weight(graph, node_j, node_i)
-
-    for node_j in graph.nodes():
-        next_page_rank_vector[node_j] = 0.
-
-        for node_i in graph[node_j]:
-            degree_node_i = graph.degree(node_i)
-            weight = (get_weight(graph, node_j, node_i))
-            weight_norm = weight / total_weight[node_j]
-            num = (1. - alpha) * (pagerank_vector[node_j]) * weight_norm
-            next_page_rank_vector[node_j] += num / degree_node_i
-        sum_of_all_partial_values += next_page_rank_vector[node_j]
-
-    leaked_pr = 1. - sum_of_all_partial_values
-
-    fraction_of_leaked_pr_to_give_each_node = leaked_pr / num_nodes
+    fraction_of_leaked_pr_to_give_each_node = compute_teleporting_probability(num_nodes, sum_of_all_partial_values)
 
     for node_k in next_page_rank_vector:
         next_page_rank_vector[node_k] = next_page_rank_vector[node_k] + fraction_of_leaked_pr_to_give_each_node
+
     return next_page_rank_vector
 
 
-def get_weight(graph, node_i, node_j):
-    return graph[node_i][node_j]['weight']
+def compute_teleporting_probability(num_nodes, sum_of_all_partial_values):
+    leaked_pr = 1. - sum_of_all_partial_values
+    fraction_of_leaked_pr_to_give_each_node = leaked_pr / num_nodes
+    return fraction_of_leaked_pr_to_give_each_node
+
+
+def compute_porting_probability(node,graph, next_page_rank_vector, pagerank_vector):
+    total_weight = 0.
+    for node_i in graph[node]:
+        total_weight += get_weight(graph, node, node_i)
+    next_page_rank_vector[node] = 0.
+    for node_i in graph[node]:
+        degree_node_i = graph.degree(node_i)
+        weight = get_weight(graph, node, node_i)
+        weight_norm = weight / total_weight
+        num = (1. - alpha) * (pagerank_vector[node_i]) * weight_norm
+        next_page_rank_vector[node] += num / degree_node_i
+
+    return next_page_rank_vector[node]
+
+
+def get_weight(graph, node_j, node_i):
+    return graph[node_j][node_i]['weight']
 
 
 def compute_distance(vector_1, vector_2):
@@ -94,7 +97,7 @@ def compute_distance(vector_1, vector_2):
     return distance
 
 
-def compute_page_rank(path, alpha):
+def compute_page_rank(path):
     graph = read_file(path)
     previous_page_rank_vector = create_pagerank_vector(graph)
     iterations = 1
@@ -102,7 +105,7 @@ def compute_page_rank(path, alpha):
     page_rank_vector = {}
     while not convergence:
         print("iteration #" + str(iterations))
-        page_rank_vector = pagerank_single_iteration(graph, alpha, previous_page_rank_vector)
+        page_rank_vector = pagerank_single_iteration(graph, previous_page_rank_vector)
         iterations += 1
         dist = compute_distance(previous_page_rank_vector, page_rank_vector)
         print(dist, epsilon)
@@ -132,11 +135,13 @@ if __name__ == '__main__':
     damping_factor = 1 - alpha
     print("computing page rank vector")
     # pp.pprint(nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon))
-    mypr = compute_page_rank(path, alpha)
+    mypr = compute_page_rank(path)
     realpr = nx.pagerank(result_graph, alpha=damping_factor, tol=epsilon)
     print(compute_distance(mypr, realpr))
+    print ("my page rank")
     pp.pprint(mypr)
-    pp.pprint(realpr)
+#print "real page rank"
+#pp.pprint(realpr)
 
     totalsum = 0.
     for val in mypr:
