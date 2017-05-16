@@ -25,23 +25,24 @@ def create_pagerank_vector(graph):
     page_rank_vector = {}
     num_nodes = graph.number_of_nodes()
     initial_pr_value = 1. / num_nodes
-    for node_id in range(1, num_nodes + 1):
+    for node_id in graph.nodes():
         page_rank_vector[node_id] = initial_pr_value
     return page_rank_vector
 
 
-def pagerank_single_iteration(graph, pagerank_vector):
+def pagerank_single_iteration(graph, pagerank_vector, teleporting_vector):
     next_page_rank_vector = {}
     sum_of_all_partial_values = 0.
-    num_nodes = graph.number_of_nodes()
     for node in graph.nodes():
         next_page_rank_vector[node] = compute_porting_probability(node, graph, next_page_rank_vector, pagerank_vector)
         sum_of_all_partial_values += next_page_rank_vector[node]
 
-    fraction_of_leaked_pr_to_give_each_node = compute_teleporting_probability(num_nodes, sum_of_all_partial_values)
+    leaked_pr = 1. - sum_of_all_partial_values
+
+
 
     for node_k in next_page_rank_vector:
-        next_page_rank_vector[node_k] = next_page_rank_vector[node_k] + fraction_of_leaked_pr_to_give_each_node
+        next_page_rank_vector[node_k] = next_page_rank_vector[node_k] + leaked_pr * teleporting_vector[node_k]
 
     return next_page_rank_vector
 
@@ -65,7 +66,6 @@ def normalize_graph(graph):
 
 
 def compute_porting_probability(node, graph, next_page_rank_vector, pagerank_vector):
-    # total_weight = compute_total_weight_for_node(graph, node)
     next_page_rank_vector[node] = 0.
     for node_i in graph[node]:
         weight = get_weight(graph, node_i, node)
@@ -74,12 +74,12 @@ def compute_porting_probability(node, graph, next_page_rank_vector, pagerank_vec
     return next_page_rank_vector[node]
 
 
-def compute_teleporting_probability(num_nodes, sum_of_all_partial_values):
-    leaked_pr = 1. - sum_of_all_partial_values
-    fraction_of_leaked_pr_to_give_each_node = leaked_pr / num_nodes
-    return fraction_of_leaked_pr_to_give_each_node
-
-
+def compute_teleporting_distribution(graph):
+    teleporting_distribution = {}
+    number_of_nodes = graph.number_of_nodes()
+    for node in graph:
+        teleporting_distribution[node] = 1./number_of_nodes
+    return teleporting_distribution
 
 def compute_total_weight_for_node(graph, node):
     total_weight = 0.
@@ -99,14 +99,14 @@ def compute_distance(vector_1, vector_2):
     return distance
 
 
-def compute_page_rank(graph):
+def compute_page_rank(graph, teleporting_vector):
     previous_page_rank_vector = create_pagerank_vector(graph)
     iterations = 1
     convergence = False
     page_rank_vector = {}
     while not convergence:
         print("iteration #" + str(iterations))
-        page_rank_vector = pagerank_single_iteration(graph, previous_page_rank_vector)
+        page_rank_vector = pagerank_single_iteration(graph, previous_page_rank_vector, teleporting_vector)
         iterations += 1
         dist = compute_distance(previous_page_rank_vector, page_rank_vector)
         print(dist, epsilon)
@@ -122,7 +122,8 @@ if __name__ == '__main__':
     result_graph = read_file(path)
     print("computing page rank vector")
     result_graph = normalize_graph(result_graph)
-    mypr = compute_page_rank(result_graph)
+    teleporting_vector = compute_teleporting_distribution(result_graph)
+    mypr = compute_page_rank(result_graph, teleporting_vector)
     print("my page rank:")
 
     for node in sorted(mypr, key=mypr.get, reverse=True):
