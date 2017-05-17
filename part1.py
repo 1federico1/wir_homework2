@@ -39,8 +39,6 @@ def pagerank_single_iteration(graph, pagerank_vector, teleporting_vector):
 
     leaked_pr = 1. - sum_of_all_partial_values
 
-
-
     for node_k in next_page_rank_vector:
         next_page_rank_vector[node_k] = next_page_rank_vector[node_k] + leaked_pr * teleporting_vector[node_k]
 
@@ -78,8 +76,9 @@ def compute_teleporting_distribution(graph):
     teleporting_distribution = {}
     number_of_nodes = graph.number_of_nodes()
     for node in graph:
-        teleporting_distribution[node] = 1./number_of_nodes
+        teleporting_distribution[node] = 1. / number_of_nodes
     return teleporting_distribution
+
 
 def compute_total_weight_for_node(graph, node):
     total_weight = 0.

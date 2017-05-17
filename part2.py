@@ -25,16 +25,18 @@ def filter_results(pr_vector, user_ratings):
     for value in sorted(result, key=result.get, reverse=True):
         print(value, result[value])
 
+
 def compute_bias(rating, user_ratings):
     sum_of_ratings = 0.
     for movie in user_ratings:
         sum_of_ratings += user_ratings[movie]
     return rating / sum_of_ratings
 
+
 def compute_teleporting_vector(graph, user_ratings):
     teleporting_vector = {}
     for node in graph:
-        if(node in user_ratings):
+        if (node in user_ratings):
             teleporting_vector[node] = compute_bias(user_ratings[node], user_ratings)
         else:
             teleporting_vector[node] = 0.
@@ -49,4 +51,3 @@ if __name__ == '__main__':
     teleporting_vector = compute_teleporting_vector(norm_graph, user_ratings)
     pr_vector = part1.compute_page_rank(norm_graph, teleporting_vector)
     filter_results(pr_vector, user_ratings)
-    # page_rank = reader.compute_page_rank(ratings_file)
