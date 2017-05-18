@@ -2,16 +2,8 @@ path = "datasets/movie_graph.txt"
 import part1
 import pprint as pp
 import csv
+import os
 
-
-# def compute_list_of_categories(movie, category_file):
-#     movie_categories = []
-#     for category in category_file:
-#         if str(movie) in category_file[category]:
-#             movie_categories.append(1)
-#         else:
-#             movie_categories.append(0)
-#     return movie_categories
 
 def compute_page_rank_movie(map, movie):
     list_of_page_ranks = []
@@ -23,17 +15,6 @@ def compute_page_rank_movie(map, movie):
 
     return list_of_page_ranks
 
-
-# def compute_weight(list_of_categories, user_preferences_vector):
-#     total = 0.
-#     weight = 0.
-#     cont = 0
-#     for preference in user_preferences_vector:
-#         total += preference
-#     while cont < len(user_preferences_vector):
-#         weight += user_preferences_vector[cont] * list_of_categories[cont]
-#         cont += 1
-#     return weight / total
 
 def from_file_to_map(file):
     map = {}
@@ -59,8 +40,10 @@ if __name__ == '__main__':
     user_preferences_vector = [3, 4, 0, 2, 1]
     graph = part1.read_file(path)
     cont = 1
-    files = ['datasets/input_1.txt', 'datasets/input_2.txt', 'datasets/input_3.txt', 'datasets/input_4.txt',
-             'datasets/input_5.txt']
+    os.chdir('datasets')
+    directory = os.listdir()
+    files = [file for file in directory if file.startswith('input')]
+    files.sort()
     maps = {}
 
     for file in files:
@@ -69,10 +52,7 @@ if __name__ == '__main__':
 
     for movie in graph:
         pr_vector = pageranks_values(movie, maps)
-        pp.pprint(pr_vector)
-
-
-
+        print(movie, pr_vector)
 
         # for movie in norm_graph:
         #     page_rank_movie_vector = compute_page_rank_movie(map, movie);
