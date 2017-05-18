@@ -25,10 +25,10 @@ if __name__ == '__main__':
         temp_map[cont] = part1.compute_page_rank(current_graph, teleporting_dist)
         cont += 1
 
-
     for map in temp_map:
         output_file = open('datasets/input_' + str(contatore) + '.txt', 'w')
-        print temp_map[map]
+        print
+        temp_map[map]
         for node in temp_map[map]:
             output_file.write("{}".format(node) + "\t{}".format(temp_map[map][node]) + "\n")
         output_file.close()
