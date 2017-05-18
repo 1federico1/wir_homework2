@@ -1,5 +1,4 @@
 import csv
-import pprint as pp
 import part1
 
 category_file = "datasets/category_movies.txt"
@@ -12,8 +11,9 @@ if __name__ == '__main__':
     input_file.close()
     categories = csv.reader(data, delimiter='\t')
     map = {}
+    temp_map = {}
     cont = 1
-    online_input = open('datasets/online_input.txt', 'w')
+    contatore = 1
 
     for category in categories:
         results = []
@@ -21,10 +21,15 @@ if __name__ == '__main__':
         map[cont] = results
         current_graph = graph.subgraph(map[cont])
         current_graph = part1.normalize_graph(current_graph)
-        cont += 1
         teleporting_dist = part1.compute_teleporting_distribution(current_graph)
-        pr_vector = part1.compute_page_rank(current_graph, teleporting_dist)
-        for node in pr_vector:
-            online_input.write(str(node) + "\t{0}".format(pr_vector[node]) + "\t")
-        online_input.write("\n")
-    online_input.close()
+        temp_map[cont] = part1.compute_page_rank(current_graph, teleporting_dist)
+        cont += 1
+
+
+    for map in temp_map:
+        output_file = open('datasets/input_' + str(contatore) + '.txt', 'w')
+        print temp_map[map]
+        for node in temp_map[map]:
+            output_file.write("{}".format(node) + "\t{}".format(temp_map[map][node]) + "\n")
+        output_file.close()
+        contatore += 1
