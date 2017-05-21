@@ -36,24 +36,35 @@ def pageranks_values(movie, maps):
     return vector
 
 
+def aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences_vector):
+    cont = 0
+    result = 0.
+    while cont < len(pr_vector):
+        result += pr_vector[cont] * user_preferences_vector[cont]
+        cont+=1
+    return result/norm_user_preferences_vector
+
+
 if __name__ == '__main__':
-    user_preferences_vector = [3, 4, 0, 2, 1]
+    user_preferences_vector = [4, 3, 3, 1, 1]
     graph = part1.read_file(path)
     cont = 1
     os.chdir('datasets')
-    directory = os.listdir()
+    directory = os.listdir('.')
     files = [file for file in directory if file.startswith('input')]
     files.sort()
     maps = {}
+    result = {}
 
     for file in files:
         maps[cont] = from_file_to_map(file)
         cont += 1
 
+    norm_user_preferences_vector = sum(user_preferences_vector)
+
     for movie in graph:
         pr_vector = pageranks_values(movie, maps)
-        print(movie, pr_vector)
-
-        # for movie in norm_graph:
-        #     page_rank_movie_vector = compute_page_rank_movie(map, movie);
-        #     print (movie, weight)
+        final_output = aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences_vector)
+        result[movie] = final_output
+    for movie in sorted(result, key = result.get, reverse = True):
+        print (movie,result[movie])
