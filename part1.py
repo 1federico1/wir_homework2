@@ -115,9 +115,13 @@ def compute_page_rank(graph, teleporting_vector):
         previous_page_rank_vector = page_rank_vector
     return page_rank_vector
 
-
+def graph_analysis():
+    graph = read_file(path)
+    print("number of nodes: " + str(graph.number_of_nodes()))
+    print("number of edges: " + str(graph.number_of_edges()))
 
 if __name__ == '__main__':
+    graph_analysis()
     print("computing graph")
     result_graph = read_file(path)
     print("computing page rank vector")
