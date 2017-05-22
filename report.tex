@@ -1,0 +1,54 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\begin{document}
+\section{Introduction}
+The following document concerns the Link Analysis techniques and is part of the second homework
+of the \textit{Web Information Retrieval} course.\\
+The goal of this homework is to compute the \textbf{Topic-Specific-PageRank} for the nodes of
+a weighted and undirected graph, representing movies and relations among them, to obtain recommendations.\\
+Recommendations can be computed biasing the Topic-Specific-PageRank according to users' preferences about
+a certain set of movies.
+
+\section{MovieLens 100K Dataset analysis}
+\textbf{MovieLens 100K Dataset} is a stable benchmark dataset containing
+ 100.000 ratings from 943 users in 1682 movies, where each user voted for at least 20 movies.
+ Each rating ranges from 1 to 5 according to the degree of user preference.
+ \footnote{http://grouplens.org/datasets/movielens/100k/}\\
+\subsection{Movie Graph}
+This graph is a representation of a dataset called \textit{Movie\_Graph}, whose nodes are movies
+with a specific ID, and edges are links between them, each one with a weight.\\
+The undirected graph is composed by 1682 nodes and 1966412 edges.
+\section{Topic Specific PageRank Implementation}
+In the first part we used the \textit{networkx}\footnote{networkx is a Python language software package for the creation
+and study of the structure of complex networks} library in order to build the weighted and undirected graph.\\
+The algorithm proposed during the second lab session was intended for an unweighted graph;\\
+In fact, the porting probability in the PageRank of a specific node j, was the following:\\
+\begin{center}
+$ r_j =\sum_{i\rightarrow j}(1-\alpha) \frac{PR_{i}^{t}}{\delta_{out}(i)}$
+\end{center}
+where $i$ is the node adjacent to $j$, $\alpha$ is the teleporting probability, $t$ is a counter for the
+iteration and $\delta_{out}(i)$ is the out degree of $i$.\\
+The out degree of node $i$ is inserted at denominator because the probability for a random surfer
+of going from $i$ to its neighbours is considered uniform.\\
+In the homework scope, such probability must be calculated according to edges weights, then
+the uniform hypothesis does not hold anymore.\\
+The weight w(i,j) of the edge (i,j) must be normalized to get a probability value(in the
+range [0,1]):\\
+\begin{center}
+$weight\_norm(i,j) = \frac{w(i,j)}{\sum_{i\rightarrow k}w(i,k)}$\\
+\end{center}
+Finally, the porting probability is obtained with the following:\\
+\begin{center}
+$ r_j =\sum_{i\rightarrow j}(1-\alpha)PR_{i}^{t}$ $weight\_norm(i,j)$\\
+\end{center}
+
+
+
+
+
+
+
+
+
+
+\end{document}
