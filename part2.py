@@ -1,6 +1,6 @@
 import part1
 import csv
-
+import sys
 ratings_file = "datasets/user_movie_rating.txt"
 movie_file = "datasets/movie_graph.txt"
 
@@ -45,8 +45,8 @@ def compute_teleporting_vector(graph, user_ratings):
 
 
 if __name__ == '__main__':
-    user_ratings = read_ratings(ratings_file, 1683)
-    graph = part1.read_file(movie_file)
+    user_ratings = read_ratings(sys.argv[2], sys.argv[3])
+    graph = part1.read_file(sys.argv[1])
     norm_graph = part1.normalize_graph(graph)
     teleporting_vector = compute_teleporting_vector(norm_graph, user_ratings)
     pr_vector = part1.compute_page_rank(norm_graph, teleporting_vector)

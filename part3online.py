@@ -1,8 +1,10 @@
 path = "datasets/movie_graph.txt"
 import part1
+import part3offline as p3offline
 import pprint as pp
 import csv
 import os
+import sys
 
 
 def compute_page_rank_movie(map, movie):
@@ -41,12 +43,14 @@ def aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences
     result = 0.
     while cont < len(pr_vector):
         result += pr_vector[cont] * user_preferences_vector[cont]
-        cont+=1
-    return result/norm_user_preferences_vector
+        cont += 1
+    return result / norm_user_preferences_vector
 
 
 if __name__ == '__main__':
-    user_preferences_vector = [4, 3, 3, 1, 1]
+    # p3offline.pageranks()
+    user_input = sys.argv[1]
+    user_preferences_vector = ([int(value) for value in user_input.split('_')])
     graph = part1.read_file(path)
     cont = 1
     os.chdir('datasets')
@@ -66,5 +70,5 @@ if __name__ == '__main__':
         pr_vector = pageranks_values(movie, maps)
         final_output = aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences_vector)
         result[movie] = final_output
-    for movie in sorted(result, key = result.get, reverse = True):
-        print (movie,result[movie])
+    for movie in sorted(result, key=result.get, reverse=True):
+        print(movie, result[movie])

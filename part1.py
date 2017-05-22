@@ -116,6 +116,7 @@ def compute_page_rank(graph, teleporting_vector):
     return page_rank_vector
 
 
+
 if __name__ == '__main__':
     print("computing graph")
     result_graph = read_file(path)
