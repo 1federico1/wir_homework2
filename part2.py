@@ -1,6 +1,7 @@
 import part1
 import csv
 import sys
+
 ratings_file = "datasets/user_movie_rating.txt"
 movie_file = "datasets/movie_graph.txt"
 
@@ -43,10 +44,11 @@ def compute_teleporting_vector(graph, user_ratings):
 
     return teleporting_vector
 
+
 def user_ratings_analysis():
     user_file = open(ratings_file, 'r')
     data = user_file.readlines()
-    lines = csv.reader(data, delimiter = '\t')
+    lines = csv.reader(data, delimiter='\t')
     users = set()
     movies = set()
     ratings = []
@@ -57,6 +59,7 @@ def user_ratings_analysis():
     print("number of users " + str(len(users)))
     print("number of movies " + str(len(movies)))
     print("number of reviews " + str(len(ratings)))
+
 
 if __name__ == '__main__':
     user_ratings = read_ratings(sys.argv[2], sys.argv[3])

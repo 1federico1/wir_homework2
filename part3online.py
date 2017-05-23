@@ -1,10 +1,9 @@
-path = "datasets/movie_graph.txt"
-import part1
-import part3offline as p3offline
-import pprint as pp
 import csv
 import os
 import sys
+import part1
+
+path = "datasets/movie_graph.txt"
 
 
 def compute_page_rank_movie(map, movie):
@@ -70,5 +69,11 @@ if __name__ == '__main__':
         pr_vector = pageranks_values(movie, maps)
         final_output = aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences_vector)
         result[movie] = final_output
+
     for movie in sorted(result, key=result.get, reverse=True):
         print(movie, result[movie])
+
+    sum = 0.
+    for movie in result:
+        sum += result[movie]
+    print(sum)
