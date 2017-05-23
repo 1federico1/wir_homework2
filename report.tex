@@ -1,5 +1,6 @@
 \documentclass[11pt]{article}
 \usepackage{graphicx}
+\usepackage{mathtools}
 \begin{document}
 \section{Introduction}
 The following document concerns the Link Analysis techniques and is part of the second homework
@@ -42,12 +43,56 @@ Finally, the porting probability is obtained with the following:\\
 $ r_j =\sum_{i\rightarrow j}(1-\alpha)PR_{i}^{t}$ $weight\_norm(i,j)$\\
 \end{center}
 
+\section{Movie recommendation from user's preferences}
+In the second part we implemented a method for recommending movies to a given user according to his preferences.
+We used the TSP algorithm of the first part applied on \textit{Movie\_Graph} biasing the teleporting probability
+distribution with respect to his ratings.\\
+The teleporting distribution was defined in the following way: \\
+\begin{center}
+  $LeakedPR = 1 - \sum_{j}{r_j}$
+\end{center}
+where $r_j$ is the porting probability value computed for each node $j$.\\
+In the first part of the homework the teleporting distribution $P(t)$ was uniform:
+given that the surfer is in the node $j$, the probability of teleporting to another node $i$ in the graph is the same
+for all $i$. Hence, the teleporting probability $P_{j}(t)$ for a single node $j$ was :
+\begin{center}
+  $P_{j}(t) = \frac{LeakedPR}{N}$
+\end{center}
+where $N$ is the number of nodes in the graph.\\
+Now the teleporting probability distribution must be modified according to user's ratings. We defined the bias as follows:
+\begin{equation}
+    bias_{j} =
+    \begin{cases*}
+      \frac{rating^{u}_{j}}{\sum_{k}{rating^{u}_{k}}} & if $j \in rating^{u}$ \\
+      0        & otherwise
+    \end{cases*}
+  \end{equation}
+where $rating^{u}$ is the set of ratings given by user $u$, and $rating^{u}_{j}$ is the rating in this set for a specific
+movie $j$. \\
+Finally, the biased teleporting probability for a single node $j$ is :
+\begin{center}
+  $P_{j}(t) = LeakedPR \cdot bias_{j}$
+\end{center}
+Finally, we filtered out from the results the movies already seen by the user, i.e. already ranked.
 
+\section{Part 3}
+In this last section we explain the approach we chose to implement a method able to recommend movies without computing
+page rank at recommendation time. We developed two algorithms to achieve this goal : the former computes the pagerank
+for each category and the latter combines the results of the first algorithm into a single output. \\
+\subsection{offline}
+This module applies the page rank computation considering a different teleporting distribution for each category. The
+distribution $P_{C}(t)$ is biased as follows :
+\begin{equation}
+    bias_{j} =
+    \begin{cases*}
+      \frac{1}{|C|} & if $j \in C$ \\
+      0        & otherwise
+    \end{cases*}
+  \end{equation}
+where C represents a category, i.e. a set of movies.\\
+Hence, we obtained five different page rank vectors, one for each category.
 
-
-
-
-
+\subsection{online}
 
 
 
