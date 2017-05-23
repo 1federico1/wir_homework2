@@ -1,7 +1,7 @@
 import networkx as nx
 import csv
 
-path = "datasets/movie_graph.txt"
+movie_file = "datasets/movie_graph.txt"
 result = nx.DiGraph()
 alpha = .15
 epsilon = 10 ** -6
@@ -115,25 +115,25 @@ def compute_page_rank(graph, teleporting_vector):
 
 
 def graph_analysis():
-    graph = read_file(path)
+    graph = read_file(movie_file)
     print("number of nodes: " + str(graph.number_of_nodes()))
     print("number of edges: " + str(graph.number_of_edges()))
 
 
-if __name__ == '__main__':
-    graph_analysis()
-    print("computing graph")
-    result_graph = read_file(path)
-    print("computing page rank vector")
-    result_graph = normalize_graph(result_graph)
-    teleporting_vector = compute_teleporting_distribution(result_graph)
-    mypr = compute_page_rank(result_graph, teleporting_vector)
-    print("my page rank:")
-
-    for node in sorted(mypr, key=mypr.get, reverse=True):
-        print(node, mypr[node])
-
-    totalsum = 0.
-    for val in mypr:
-        totalsum += mypr[val]
-    print(totalsum)
+# if __name__ == '__main__':
+#     graph_analysis()
+#     print("computing graph")
+#     result_graph = read_file(path)
+#     print("computing page rank vector")
+#     result_graph = normalize_graph(result_graph)
+#     teleporting_vector = compute_teleporting_distribution(result_graph)
+#     mypr = compute_page_rank(result_graph, teleporting_vector)
+#     print("my page rank:")
+#
+#     for node in sorted(mypr, key=mypr.get, reverse=True):
+#         print(node, mypr[node])
+#
+#     totalsum = 0.
+#     for val in mypr:
+#         totalsum += mypr[val]
+#     print(totalsum)

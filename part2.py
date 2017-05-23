@@ -1,9 +1,6 @@
-import part1
+import part1 as p1
 import csv
 import sys
-
-ratings_file = "datasets/user_movie_rating.txt"
-movie_file = "datasets/movie_graph.txt"
 
 
 def read_ratings(path, user_id):
@@ -12,9 +9,14 @@ def read_ratings(path, user_id):
     input_file.close()
     ratings = csv.reader(data, delimiter='\t')
     result = {}
+    user_not_found = True
     for line in ratings:
         if line[0] == str(user_id):
             result[int(line[1])] = int(line[2])
+            if user_not_found:
+                user_not_found = False
+    if user_not_found:
+        raise ValueError('User id not present')
     return result
 
 
@@ -41,12 +43,11 @@ def compute_teleporting_vector(graph, user_ratings):
             teleporting_vector[node] = compute_bias(user_ratings[node], user_ratings)
         else:
             teleporting_vector[node] = 0.
-
     return teleporting_vector
 
 
 def user_ratings_analysis():
-    user_file = open(ratings_file, 'r')
+    user_file = open('datasets/user_movie_rating.txt', 'r')
     data = user_file.readlines()
     lines = csv.reader(data, delimiter='\t')
     users = set()
@@ -63,8 +64,8 @@ def user_ratings_analysis():
 
 if __name__ == '__main__':
     user_ratings = read_ratings(sys.argv[2], sys.argv[3])
-    graph = part1.read_file(sys.argv[1])
-    norm_graph = part1.normalize_graph(graph)
+    graph = p1.read_file(sys.argv[1])
+    norm_graph = p1.normalize_graph(graph)
     teleporting_vector = compute_teleporting_vector(norm_graph, user_ratings)
-    pr_vector = part1.compute_page_rank(norm_graph, teleporting_vector)
+    pr_vector = p1.compute_page_rank(norm_graph, teleporting_vector)
     filter_results(pr_vector, user_ratings)

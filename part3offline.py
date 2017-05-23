@@ -2,7 +2,13 @@ import csv
 import part1 as p1
 
 category_file = "datasets/category_movies.txt"
-path = "datasets/movie_graph.txt"
+
+
+def read_categories_file():
+    input_file = open(category_file, 'r')
+    data = input_file.readlines()
+    input_file.close()
+    return csv.reader(data, delimiter='\t')
 
 
 def compute_teleporting_probability(graph, category):
@@ -15,18 +21,7 @@ def compute_teleporting_probability(graph, category):
     return teleporting_distribution
 
 
-def pageranks():
-    graph = p1.read_file(path)
-    graph = p1.normalize_graph(graph)
-    input_file = open(category_file, 'r')
-    data = input_file.readlines()
-    input_file.close()
-    categories = csv.reader(data, delimiter='\t')
-    map = {}
-    temp_map = {}
-    cont = 1
-    file_cont = 1
-
+def compute_pageranks_for_categories(categories, cont, graph, map, temp_map):
     for category in categories:
         results = [int(i) for i in category]
         map[cont] = results
@@ -37,6 +32,8 @@ def pageranks():
         temp_map[cont] = p1.compute_page_rank(graph, teleporting_dist)
         cont += 1
 
+
+def write_pageranks_to_files(file_cont, temp_map):
     for map in temp_map:
         output_file = open('datasets/input_' + str(file_cont) + '.txt', 'w')
         for node in temp_map[map]:
@@ -45,5 +42,21 @@ def pageranks():
         file_cont += 1
 
 
-if __name__ == '__main__':
-    pageranks()
+def pageranks():
+    graph = p1.read_file(p1.movie_file)
+    graph = p1.normalize_graph(graph)
+
+    categories = read_categories_file()
+    map = {}
+    temp_map = {}
+    cont = 1
+    file_cont = 1
+
+    compute_pageranks_for_categories(categories, cont, graph, map, temp_map)
+
+    write_pageranks_to_files(file_cont, temp_map)
+
+
+
+    # if __name__ == '__main__':
+    # pageranks()

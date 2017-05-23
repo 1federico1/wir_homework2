@@ -1,9 +1,8 @@
 import csv
 import os
 import sys
-import part1
-
-path = "datasets/movie_graph.txt"
+import part1 as p1
+import part3offline as p3offline
 
 
 def compute_page_rank_movie(map, movie):
@@ -41,16 +40,22 @@ def aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences
     cont = 0
     result = 0.
     while cont < len(pr_vector):
-        result += pr_vector[cont] * user_preferences_vector[cont]
-        cont += 1
+        try:
+            result += pr_vector[cont] * user_preferences_vector[cont]
+            cont += 1
+        except IndexError:
+            raise IndexError('User preferences vector has to be of five elements')
     return result / norm_user_preferences_vector
 
 
 if __name__ == '__main__':
-    # p3offline.pageranks()
+    p3offline.pageranks()
     user_input = sys.argv[1]
-    user_preferences_vector = ([int(value) for value in user_input.split('_')])
-    graph = part1.read_file(path)
+    try:
+        user_preferences_vector = ([int(value) for value in user_input.split('_')])
+    except ValueError:
+        raise ValueError('Bad written user preferences vector')
+    graph = p1.read_file(p1.movie_file)
     cont = 1
     os.chdir('datasets')
     directory = os.listdir('.')
@@ -73,7 +78,7 @@ if __name__ == '__main__':
     for movie in sorted(result, key=result.get, reverse=True):
         print(movie, result[movie])
 
-    sum = 0.
-    for movie in result:
-        sum += result[movie]
-    print(sum)
+        # sum = 0.
+        # for movie in result:
+        #     sum += result[movie]
+        # print(sum)
