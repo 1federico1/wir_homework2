@@ -58,5 +58,5 @@ def pageranks():
 
 
 
-    # if __name__ == '__main__':
-    # pageranks()
+    if __name__ == '__main__':
+        pageranks()

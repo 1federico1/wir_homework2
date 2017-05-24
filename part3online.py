@@ -2,7 +2,6 @@ import csv
 import os
 import sys
 import part1 as p1
-import part3offline as p3offline
 
 
 def compute_page_rank_movie(map, movie):
@@ -49,7 +48,7 @@ def aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences
 
 
 if __name__ == '__main__':
-    p3offline.pageranks()
+    # p3offline.pageranks()
     user_input = sys.argv[1]
     try:
         user_preferences_vector = ([int(value) for value in user_input.split('_')])
@@ -69,11 +68,24 @@ if __name__ == '__main__':
         cont += 1
 
     norm_user_preferences_vector = sum(user_preferences_vector)
+    scan_user_pref_vector = 0
 
-    for movie in graph:
-        pr_vector = pageranks_values(movie, maps)
-        final_output = aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences_vector)
-        result[movie] = final_output
+    for map in maps:
+        for movie in maps[map]:
+            try:
+                result[movie] += maps[map][movie] * user_preferences_vector[scan_user_pref_vector]
+            except KeyError:  # this is for the first time the result map is accessed
+                result[movie] = maps[map][movie] * user_preferences_vector[scan_user_pref_vector]
+        scan_user_pref_vector += 1
+
+    for movie in result:
+        result[movie] /= norm_user_preferences_vector
+
+    # for movie in graph:
+    #     pr_vector = pageranks_values(movie, maps)
+    #     final_output = aggregate_pagerank(pr_vector, user_preferences_vector, norm_user_preferences_vector)
+    #     result[movie] = final_output
+
 
     for movie in sorted(result, key=result.get, reverse=True):
         print(movie, result[movie])
