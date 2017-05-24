@@ -12,18 +12,17 @@ a certain set of movies.
 
 \section{MovieLens 100K Dataset analysis}
 \textbf{MovieLens 100K Dataset} is a stable benchmark dataset containing
- 100.000 ratings from 943 users in 1682 movies, where each user voted for at least 20 movies.
+ 100.000 ratings from 943 users for 1682 movies, where each user voted for at least 20 movies.
  Each rating ranges from 1 to 5 according to the degree of user preference.
- \footnote{http://grouplens.org/datasets/movielens/100k/}\\
+ \ footnote{http://grouplens.org/datasets/movielens/100k/} \\
 \subsection{Movie Graph}
-This graph is a representation of a dataset called \textit{Movie\_Graph}, whose nodes are movies
+This graph is a representation of a dataset called \textit{Movie\--Graph}, whose nodes are movies
 with a specific ID, and edges are links between them, each one with a weight.\\
 The undirected graph is composed by 1682 nodes and 1966412 edges.
 \section{Topic Specific PageRank Implementation}
 In the first part we used the \textit{networkx}\footnote{networkx is a Python language software package for the creation
 and study of the structure of complex networks} library in order to build the weighted and undirected graph.\\
-The algorithm proposed during the second lab session was intended for an unweighted graph;\\
-In fact, the porting probability in the PageRank of a specific node j, was the following:\\
+The algorithm proposed during the second lab session was intended for an unweighted graph; in fact, the porting probability in the PageRank of a specific node j, was the following:\\
 \begin{center}
 $ r_j =\sum_{i\rightarrow j}(1-\alpha) \frac{PR_{i}^{t}}{\delta_{out}(i)}$
 \end{center}
@@ -33,8 +32,8 @@ The out degree of node $i$ is inserted at denominator because the probability fo
 of going from $i$ to its neighbours is considered uniform.\\
 In the homework scope, such probability must be calculated according to edges weights, then
 the uniform hypothesis does not hold anymore.\\
-The weight w(i,j) of the edge (i,j) must be normalized to get a probability value(in the
-range [0,1]):\\
+The weight $w(i,j)$ of the edge $(i,j)$ must be normalized to get a probability value(in the
+range $[0,1]$):\\
 \begin{center}
 $weight\_norm(i,j) = \frac{w(i,j)}{\sum_{i\rightarrow k}w(i,k)}$\\
 \end{center}
@@ -45,7 +44,7 @@ $ r_j =\sum_{i\rightarrow j}(1-\alpha)PR_{i}^{t}$ $weight\_norm(i,j)$\\
 
 \section{Movie recommendation from user's preferences}
 In the second part we implemented a method for recommending movies to a given user according to his preferences.
-We used the TSP algorithm of the first part applied on \textit{Movie\_Graph} biasing the teleporting probability
+We used the TSP algorithm of the first part applied on \textit{Movie\--Graph} biasing the teleporting probability
 distribution with respect to his ratings.\\
 The teleporting distribution was defined in the following way: \\
 \begin{center}
@@ -77,8 +76,8 @@ Finally, we filtered out from the results the movies already seen by the user, i
 
 \section{Part 3}
 In this last section we explain the approach we chose to implement a method able to recommend movies without computing
-page rank at recommendation time. We developed two algorithms to achieve this goal : the former computes the pagerank
-for each category and the latter combines the results of the first algorithm into a single output. \\
+the PageRank at recommendation time. We developed two algorithms to achieve this goal : the former computes the PageRank
+for each category of movies and the latter combines the results of the first algorithm into a single output. \\
 \subsection{offline}
 This module applies the page rank computation considering a different teleporting distribution for each category. The
 distribution $P_{C}(t)$ is biased as follows :
