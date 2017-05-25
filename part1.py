@@ -102,14 +102,11 @@ def compute_page_rank(graph, teleporting_vector):
     convergence = False
     page_rank_vector = {}
     while not convergence:
-        print("iteration #" + str(iterations))
         page_rank_vector = pagerank_single_iteration(graph, previous_page_rank_vector, teleporting_vector)
         iterations += 1
         dist = compute_distance(previous_page_rank_vector, page_rank_vector)
-        print(dist, epsilon)
         if dist <= epsilon:
             convergence = True
-            print("Convergence")
         previous_page_rank_vector = page_rank_vector
     return page_rank_vector
 
@@ -120,20 +117,15 @@ def graph_analysis():
     print("number of edges: " + str(graph.number_of_edges()))
 
 
-# if __name__ == '__main__':
-#     graph_analysis()
-#     print("computing graph")
-#     result_graph = read_file(path)
-#     print("computing page rank vector")
-#     result_graph = normalize_graph(result_graph)
-#     teleporting_vector = compute_teleporting_distribution(result_graph)
-#     mypr = compute_page_rank(result_graph, teleporting_vector)
-#     print("my page rank:")
-#
-#     for node in sorted(mypr, key=mypr.get, reverse=True):
-#         print(node, mypr[node])
-#
-#     totalsum = 0.
-#     for val in mypr:
-#         totalsum += mypr[val]
-#     print(totalsum)
+# You can launch part1 alone by running 'python part1.py' from the command line
+if __name__ == '__main__':
+    print("computing graph")
+    result_graph = read_file(movie_file)
+    print("computing page rank vector")
+    result_graph = normalize_graph(result_graph)
+    teleporting_vector = compute_teleporting_distribution(result_graph)
+    mypr = compute_page_rank(result_graph, teleporting_vector)
+    print("my page rank:")
+
+    for node in sorted(mypr, key=mypr.get, reverse=True):
+        print(node, mypr[node])

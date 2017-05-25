@@ -23,11 +23,9 @@ def compute_teleporting_probability(graph, category):
 
 def compute_pageranks_for_categories(categories, cont, graph, map, temp_map):
     for category in categories:
+        print("Computing TSP for category " + str(cont))
         results = [int(i) for i in category]
         map[cont] = results
-        # current_graph = graph.subgraph(map[cont])
-        # current_graph = p1.normalize_graph(current_graph)
-        # teleporting_dist = p1.compute_teleporting_distribution(current_graph)
         teleporting_dist = compute_teleporting_probability(graph, map[cont])
         temp_map[cont] = p1.compute_page_rank(graph, teleporting_dist)
         cont += 1
@@ -57,6 +55,5 @@ def pageranks():
     write_pageranks_to_files(file_cont, temp_map)
 
 
-
-    if __name__ == '__main__':
-        pageranks()
+if __name__ == '__main__':
+    pageranks()
